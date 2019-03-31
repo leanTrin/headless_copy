@@ -2,13 +2,15 @@ import os
 from shutil import copyfile
 import time
 
+dev = False
 
 usb = "/media/pi/9132-18E9/movies"
 usbDisk = "/dev/sda1"
 storage = "/home/pi/Movies"
 
 def printlog(text):
-    print("[%s]: %s" %(time.asctime( time.localtime(time.time())),text))
+    if dev:
+        print("[%s]: %s" %(time.asctime( time.localtime(time.time())),text))
 while True:
     if(os.path.isdir(usb)):
         copy = []

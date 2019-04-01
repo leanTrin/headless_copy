@@ -25,7 +25,7 @@ def printlog(text):
         print("[%s]: %s" %(time.asctime( time.localtime(time.time())),text))
 
 def usbMovieFolder():
-    usb = "/home/retr0"
+    usb = "/media/pi/"
     dirlist = os.listdir(usb)
     for item in dirlist:
         dirs = usb + "/" +item

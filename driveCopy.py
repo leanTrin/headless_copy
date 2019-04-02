@@ -37,6 +37,12 @@ def usbMovieFolder():
 
 while True: #TODO: check if a while loop is a good idea ran as a service in pi
     try:
+        while True:
+            if(usbMovieFolder() != None):
+                break
+            else:
+                usb = usbMovieFolder()
+            time.sleep(10)
         if(os.path.isdir(usb)): # When the usb is pluged in
 
             copy = []

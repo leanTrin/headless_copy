@@ -9,6 +9,9 @@
 # Prequsities
 #   - eject -- run 'sudo apt install eject'
 ####################################
+
+#TODO: Memory optimization
+
 import os
 from shutil import copyfile
 import time
@@ -36,39 +39,35 @@ def usbMovieFolder():
     return None
 
 while True: #TODO: check if a while loop is a good idea ran as a service in pi
-    try:
-        while True:
-            if(usbMovieFolder() != None):
-                break
-            else:
-                usb = usbMovieFolder()
-            time.sleep(10)
-        if(os.path.isdir(usb)): # When the usb is pluged in
+    time.sleep(60)
+    
+    if(usbMovieFolder() != None):
+        usb = usbMovieFolder()
 
-            copy = []
+    if(os.path.isdir(usb)): # When the usb is pluged in
 
-            usbFiles = [f for f in os.listdir(usb)]
-            storageFiles = [f for f in os.listdir(storage)]
+        copy = []
 
-            for usbItem in usbFiles:
+        usbFiles = [f for f in os.listdir(usb)]
+        storageFiles = [f for f in os.listdir(storage)]
 
-                if(usbItem not in storageFiles):
-                    copy.append(usbItem)
+        for usbItem in usbFiles:
 
-            if(copy): # if there is a new file in the usb that is not already in the server
+            if(usbItem not in storageFiles):
+                copy.append(usbItem)
 
-                printlog(copy)
+        if(copy): # if there is a new file in the usb that is not already in the server
 
-                for item in copy:
+            printlog(copy)
 
-                    printlog("copying " + item)
-                    copyfile(usb + "/" + item, storage + "/" + item) #TODO: error checking
-                    printlog("done")
+            for item in copy:
 
-            #TODO: gpio lights
-            os.system('sudo eject ' + usbDisk) # need 'eject' to be installed
-            printlog("Files Copied")
-            time.sleep(10)
-    except:
-        pass
+                printlog("copying " + item)
+                #TODO: using format instead of +: copyfile("{}/{}".format(usb,item),"{}/{}".format(storage,item))
+                copyfile(usb + "/" + item, storage + "/" + item) #TODO: error checking
+                printlog("done")
+
+        #TODO: gpio lights
+        os.system('sudo eject ' + usbDisk) # need 'eject' to be installed
+        printlog("Files Copied")
 

@@ -9,9 +9,6 @@
 # Prequsities
 #   - eject -- run 'sudo apt install eject'
 ####################################
-
-#TODO: Memory optimization
-
 import os
 from shutil import copyfile
 import time
@@ -28,7 +25,7 @@ def printlog(text):
         print("[%s]: %s" %(time.asctime( time.localtime(time.time())),text))
 
 def usbMovieFolder():
-    usb = "/home/retr0"
+    usb = "/media/pi/"
     dirlist = os.listdir(usb)
     for item in dirlist:
         dirs = usb + "/" +item
@@ -39,35 +36,33 @@ def usbMovieFolder():
     return None
 
 while True: #TODO: check if a while loop is a good idea ran as a service in pi
-    time.sleep(60)
-    
-    if(usbMovieFolder() != None):
-        usb = usbMovieFolder()
+    try:
+        if(os.path.isdir(usb)): # When the usb is pluged in
 
-    if(os.path.isdir(usb)): # When the usb is pluged in
+            copy = []
 
-        copy = []
+            usbFiles = [f for f in os.listdir(usb)]
+            storageFiles = [f for f in os.listdir(storage)]
 
-        usbFiles = [f for f in os.listdir(usb)]
-        storageFiles = [f for f in os.listdir(storage)]
+            for usbItem in usbFiles:
 
-        for usbItem in usbFiles:
+                if(usbItem not in storageFiles):
+                    copy.append(usbItem)
 
-            if(usbItem not in storageFiles):
-                copy.append(usbItem)
+            if(copy): # if there is a new file in the usb that is not already in the server
 
-        if(copy): # if there is a new file in the usb that is not already in the server
+                printlog(copy)
 
-            printlog(copy)
+                for item in copy:
 
-            for item in copy:
+                    printlog("copying " + item)
+                    copyfile(usb + "/" + item, storage + "/" + item) #TODO: error checking
+                    printlog("done")
 
-                printlog("copying " + item)
-                #TODO: using format instead of +: copyfile("{}/{}".format(usb,item),"{}/{}".format(storage,item))
-                copyfile(usb + "/" + item, storage + "/" + item) #TODO: error checking
-                printlog("done")
-
-        #TODO: gpio lights
-        os.system('sudo eject ' + usbDisk) # need 'eject' to be installed
-        printlog("Files Copied")
+            #TODO: gpio lights
+            os.system('sudo eject ' + usbDisk) # need 'eject' to be installed
+            printlog("Files Copied")
+            time.sleep(10)
+    except:
+        pass
 

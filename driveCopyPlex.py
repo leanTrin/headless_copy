@@ -9,13 +9,9 @@
 # Prequsities
 #   - eject -- run 'sudo apt install eject'
 ####################################
-
-#TODO: Memory optimization
-
 import os
 from shutil import copyfile
 import time
-import subprocess
 
 dev = False                         # If True: logs the information in the terminal
 
@@ -26,25 +22,37 @@ storage = "/home/pi/Movies"         #TODO: the storage folder can be in another 
 def printlog(text):
     if dev:
         print("[%s]: %s" %(time.asctime( time.localtime(time.time())),text))
-while True:
+
+def eject(usbDisk):
+    os.system('sudo eject' + usbDisk)
+    printlog('Files Copied')
+
+while True: #TODO: check if a while loop is a good idea ran as a service in pi
     try:
-        if(os.path.isdir(usb)):
+        if(os.path.isdir(usb)): # When the usb is pluged in
+
             copy = []
+
             usbFiles = [f for f in os.listdir(usb)]
             storageFiles = [f for f in os.listdir(storage)]
-            for i in usbFiles:
-                if(i not in storageFiles):
-                    copy.append(i)
+
+            for usbItem in usbFiles:
+
+                if(usbItem not in storageFiles):
+                    copy.append(usbItem)
+
             if(copy): # if there is a new file in the usb that is not already in the server
+
                 printlog(copy)
+
                 for item in copy:
+
                     printlog("copying " + item)
-                    copyfile(usb + "/" + item, storage + "/" + item)
+                    copyfile(usb + "/" + item, storage + "/" + item) # INFO: copyfile replaces the files. It's best to move only the ones that are needed
                     printlog("done")
-            #TODO: gpio lights
-            os.system('sudo eject ' + usbDisk)
-            printlog("Files Copied")
-            time.sleep(10)
+                
+            eject(usbDisk)
     except:
         pass
     time.sleep(60)
+

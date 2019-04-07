@@ -50,8 +50,14 @@ while True: #TODO: check if a while loop is a good idea ran as a service in pi
                     printlog("copying " + item)
                     copyfile(usb + "/" + item, storage + "/" + item) # INFO: copyfile replaces the files. It's best to move only the ones that are needed
                     printlog("done")
-                
+            else:
+                printlog("Files already updated")
+
             eject(usbDisk)
+            time.sleep(120)
+        else:
+            printlog("Usb not plugged in")
+
     except:
         pass
     time.sleep(60)

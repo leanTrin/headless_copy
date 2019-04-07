@@ -32,4 +32,5 @@ while True:
             time.sleep(10)
     except:
         pass
+    time.sleep(60)
 
